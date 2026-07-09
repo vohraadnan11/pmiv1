@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#F7F4EC"/>
+  <rect x="0" y="0" width="400" height="300" fill="none" stroke="#DDD6C5" stroke-width="2"/>
+  <text x="200" y="140" font-family="monospace" font-size="16" fill="#8C3B2E" text-anchor="middle" text-transform="uppercase">PHOTO</text>
+  <text x="200" y="165" font-family="monospace" font-size="16" fill="#8C3B2E" text-anchor="middle" text-transform="uppercase">COMING SOON</text>
+</svg>

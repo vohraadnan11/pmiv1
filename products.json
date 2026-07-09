@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Automatic Poultry Nipple Drinker",
+    "category": "Drinkers",
+    "brand": "Farm & Flock",
+    "price": "450",
+    "image": "images/nipple-drinker.jpg",
+    "description": "Leak-proof automatic nipple drinker for broiler and layer sheds."
+  },
+  {
+    "name": "Round Bell Drinker 8L",
+    "category": "Drinkers",
+    "brand": "Farm & Flock",
+    "price": "620",
+    "image": "images/bell-drinker.jpg",
+    "description": "8 litre gravity-fed bell drinker, suitable for 100-150 birds."
+  },
+  {
+    "name": "Pan Feeder System",
+    "category": "Feeders",
+    "brand": "Partner Co A",
+    "price": "980",
+    "image": "images/pan-feeder.jpg",
+    "description": "Automatic pan feeding system with adjustable feed level."
+  },
+  {
+    "name": "Chick Tray Feeder",
+    "category": "Feeders",
+    "brand": "Farm & Flock",
+    "price": "150",
+    "image": "images/tray-feeder.jpg",
+    "description": "Starter tray feeder for day-old to 2-week chicks."
+  },
+  {
+    "name": "Fully Automatic Egg Incubator - 528 Eggs",
+    "category": "Incubators",
+    "brand": "Partner Co B",
+    "price": "38500",
+    "image": "images/incubator-528.jpg",
+    "description": "Digital temperature and humidity controlled incubator, 528 egg capacity."
+  },
+  {
+    "name": "Mini Incubator - 48 Eggs",
+    "category": "Incubators",
+    "brand": "Partner Co B",
+    "price": "6200",
+    "image": "images/incubator-48.jpg",
+    "description": "Compact incubator suitable for small hatcheries and backyard farms."
+  },
+  {
+    "name": "Battery Cage System - 4 Tier",
+    "category": "Cages",
+    "brand": "Partner Co A",
+    "price": "",
+    "image": "images/battery-cage.jpg",
+    "description": "Galvanized 4-tier layer battery cage system, price on request based on length."
+  },
+  {
+    "name": "Broiler Cage - Single Tier",
+    "category": "Cages",
+    "brand": "Farm & Flock",
+    "price": "2400",
+    "image": "images/broiler-cage.jpg",
+    "description": "Single tier broiler rearing cage, hot-dip galvanized."
+  },
+  {
+    "name": "Chick Brooder Heater",
+    "category": "Brooders",
+    "brand": "Farm & Flock",
+    "price": "3100",
+    "image": "images/brooder-heater.jpg",
+    "description": "Gas-operated brooder heater for uniform chick house warming."
+  },
+  {
+    "name": "Egg Collection Tray (Plastic, 30-egg)",
+    "category": "Egg Trays & Accessories",
+    "brand": "Partner Co A",
+    "price": "35",
+    "image": "images/egg-tray.jpg",
+    "description": "Stackable plastic egg tray, 30-egg capacity, food-grade."
+  }
+]

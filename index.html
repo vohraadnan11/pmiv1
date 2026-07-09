@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm & Flock Equipment Co.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root{
+    --charcoal:#232323;
+    --wheat:#E8B94A;
+    --barn:#8C3B2E;
+    --cream:#F7F4EC;
+    --slate:#4A4A45;
+    --line:#DDD6C5;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Source Sans 3', sans-serif;
+    background:var(--cream);
+    color:var(--charcoal);
+    line-height:1.5;
+  }
+  h1,h2,h3,.display{
+    font-family:'Barlow Condensed', sans-serif;
+    font-weight:700;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--charcoal);
+    color:var(--cream);
+    padding:16px 32px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:3px solid var(--wheat);
+  }
+  nav .brand{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;}
+  nav .brand span{color:var(--wheat);}
+  nav ul{list-style:none;display:flex;gap:28px;font-size:14px;text-transform:uppercase;letter-spacing:0.06em;}
+
+  /* HERO */
+  .hero{
+    position:relative;
+    min-height:420px;
+    background:linear-gradient(180deg, rgba(35,35,35,0.55), rgba(35,35,35,0.75)),
+      url('https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?q=80&w=1600&auto=format&fit=crop') center/cover;
+    color:var(--white);
+    display:flex;flex-direction:column;justify-content:center;
+    padding:64px 32px;
+  }
+  .hero .eyebrow{
+    color:var(--wheat);font-family:'IBM Plex Mono',monospace;font-size:13px;
+    letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;
+  }
+  .hero h1{font-size:clamp(36px,6vw,64px);max-width:780px;line-height:1.02;}
+  .hero p{max-width:520px;margin-top:18px;font-size:17px;color:#EDE9DC;}
+  .hero .tag-strip{
+    margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .hero .tag-strip span{
+    border:1px solid rgba(255,255,255,0.4);
+    padding:6px 12px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  /* SECTION generic */
+  section{padding:64px 32px;}
+  .section-head{max-width:640px;margin-bottom:36px;}
+  .section-head .kicker{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--barn);
+    text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;
+  }
+  .section-head h2{font-size:34px;}
+  .section-head p{color:var(--slate);margin-top:10px;font-size:16px;}
+
+  /* ABOUT */
+  .about{
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+    background:var(--white);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .stat{border-left:3px solid var(--wheat);padding-left:14px;}
+  .stat .num{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:700;}
+  .stat .label{font-size:13px;color:var(--slate);text-transform:uppercase;letter-spacing:0.05em;}
+
+  /* CATEGORIES */
+  .cat-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;
+  }
+  .cat-card{
+    background:var(--white);border:1px solid var(--line);
+    padding:24px 20px;position:relative;overflow:hidden;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .cat-card:hover{transform:translateY(-3px);border-color:var(--wheat);}
+  .cat-card .idx{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--barn);
+  }
+  .cat-card h3{font-size:22px;margin-top:8px;}
+  .cat-card p{font-size:13px;color:var(--slate);margin-top:6px;}
+
+  /* PRODUCTS */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+  .filters button{
+    background:var(--white);border:1px solid var(--line);
+    padding:8px 16px;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;
+    cursor:pointer;font-family:'Source Sans 3',sans-serif;
+  }
+  .filters button.active{background:var(--charcoal);color:var(--wheat);border-color:var(--charcoal);}
+
+  .product-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;
+  }
+  .product-card{
+    background:var(--white);border:1px solid var(--line);
+    display:flex;flex-direction:column;
+  }
+  .product-card .img-wrap{
+    aspect-ratio:4/3;background:var(--cream);overflow:hidden;position:relative;
+  }
+  .product-card .img-wrap img{width:100%;height:100%;object-fit:cover;}
+  .product-card .tag{
+    position:absolute;top:10px;left:10px;
+    background:var(--charcoal);color:var(--wheat);
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    padding:4px 8px;text-transform:uppercase;letter-spacing:0.06em;
+  }
+  .product-card .body{padding:16px;display:flex;flex-direction:column;gap:6px;flex:1;}
+  .product-card .brand{font-size:11px;color:var(--barn);text-transform:uppercase;letter-spacing:0.08em;font-family:'IBM Plex Mono',monospace;}
+  .product-card h3{font-size:19px;text-transform:none;font-weight:600;font-family:'Source Sans 3',sans-serif;}
+  .product-card .price{margin-top:auto;font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--charcoal);padding-top:8px;}
+  .product-card .inquire-btn{
+    margin-top:10px;background:var(--wheat);color:var(--charcoal);
+    border:none;padding:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:0.05em;font-size:13px;cursor:pointer;
+  }
+  .product-card .inquire-btn:hover{background:var(--barn);color:var(--white);}
+
+  /* NEWSLETTER */
+  .newsletter{
+    background:var(--charcoal);color:var(--cream);text-align:center;
+  }
+  .newsletter h2{color:var(--white);font-size:30px;}
+  .newsletter p{color:#C9C4B4;margin-top:10px;}
+  .newsletter form{
+    margin-top:26px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+  }
+  .newsletter input{
+    padding:12px 16px;border:1px solid #555;background:#2E2E2E;color:var(--white);
+    min-width:260px;font-size:14px;
+  }
+  .newsletter button{
+    background:var(--wheat);border:none;padding:12px 22px;font-weight:600;
+    text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;
+  }
+
+  footer{padding:32px;text-align:center;font-size:13px;color:var(--slate);}
+
+  /* MODAL */
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(35,35,35,0.7);
+    z-index:100;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--white);max-width:440px;width:100%;padding:32px;position:relative;
+    border-top:4px solid var(--wheat);
+  }
+  .modal .close{
+    position:absolute;top:14px;right:16px;background:none;border:none;
+    font-size:22px;cursor:pointer;color:var(--slate);
+  }
+  .modal h3{font-size:24px;margin-bottom:4px;}
+  .modal .product-ref{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--barn);
+    margin-bottom:18px;text-transform:uppercase;
+  }
+  .modal label{display:block;font-size:13px;margin-top:14px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;color:var(--slate);}
+  .modal input, .modal textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);font-family:inherit;font-size:14px;
+  }
+  .modal textarea{resize:vertical;min-height:70px;}
+  .modal .required{color:var(--barn);}
+  .modal .submit-btn{
+    margin-top:22px;width:100%;background:var(--charcoal);color:var(--wheat);
+    border:none;padding:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;
+    cursor:pointer;font-size:14px;
+  }
+  .modal .submit-btn:hover{background:var(--barn);color:var(--white);}
+  .form-note{font-size:11px;color:var(--slate);margin-top:10px;}
+  .success-msg{display:none;color:#3a7d44;font-size:13px;margin-top:12px;}
+
+  @media(max-width:800px){
+    .about{grid-template-columns:1fr;}
+    nav ul{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">FARM<span>&</span>FLOCK EQUIPMENT</div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#products">Catalog</a></li>
+    <li><a href="#newsletter">New Launches</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Wholesale &amp; Distributor Catalog — Est. Poultry Equipment Supply</div>
+  <h1>Equipment for every stage of the flock.</h1>
+  <p>Feeders, drinkers, incubators, cages and brooding systems from our own line and trusted partner manufacturers — sourced for farms and hatcheries that can't afford downtime.</p>
+  <div class="tag-strip">
+    <span>1000+ SKUs</span>
+    <span>3 Manufacturing Partners</span>
+    <span>Bulk &amp; Wholesale Inquiries</span>
+  </div>
+</header>
+
+<section class="about" id="about">
+  <div>
+    <div class="section-head" style="margin-bottom:18px;">
+      <div class="kicker">Who we are</div>
+      <h2>Built for the working farm.</h2>
+    </div>
+    <p style="color:var(--slate);font-size:16px;">We list our own equipment line alongside select manufacturing partners, so buyers can compare feeders, drinkers, incubation systems and cage setups in one place. No listings from anyone we wouldn't put on our own farm — every product is inquiry-only, so you talk to a real person before you commit to a bulk order.</p>
+  </div>
+  <div class="about-stats">
+    <div class="stat"><div class="num">1000+</div><div class="label">Products Listed</div></div>
+    <div class="stat"><div class="num">3</div><div class="label">Supplier Partners</div></div>
+    <div class="stat"><div class="num">24h</div><div class="label">Inquiry Response</div></div>
+    <div class="stat"><div class="num">WA</div><div class="label">WhatsApp Support</div></div>
+  </div>
+</section>
+
+<section id="categories">
+  <div class="section-head">
+    <div class="kicker">Browse</div>
+    <h2>What we supply</h2>
+    <p>Every category below pulls from the full catalog — click through to see live listings and send an inquiry.</p>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+</section>
+
+<section id="products">
+  <div class="section-head">
+    <div class="kicker">Catalog</div>
+    <h2>Product Listings</h2>
+    <p>Pricing shown is indicative for reference — final quotes are confirmed after inquiry, based on quantity.</p>
+  </div>
+  <div class="filters" id="filterBar"></div>
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<section class="newsletter" id="newsletter">
+  <h2>Get notified on new launches</h2>
+  <p>New equipment and restocks, straight to your inbox — no spam, just new listings.</p>
+  <form id="newsletterForm">
+    <input type="email" placeholder="you@company.com" required id="newsletterEmail">
+    <button type="submit">Notify Me</button>
+  </form>
+  <div class="success-msg" id="newsletterSuccess" style="color:#E8B94A;">Thanks — you're on the list.</div>
+</section>
+
+<footer>
+  &copy; <span id="year"></span> Farm &amp; Flock Equipment Co. — Wholesale poultry equipment catalog. All inquiries handled directly by our team.
+</footer>
+
+<!-- INQUIRY MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="close" id="modalClose">&times;</button>
+    <h3>Send Inquiry</h3>
+    <div class="product-ref" id="modalProductRef">Product: —</div>
+    <form id="inquiryForm">
+      <input type="hidden" id="fProduct" name="product">
+      <input type="hidden" id="fCompany" name="company">
+      <label>Name <span class="required">*</span></label>
+      <input type="text" name="name" required>
+      <label>Mobile Number <span class="required">*</span></label>
+      <input type="tel" name="mobile" required pattern="[0-9+\-\s]{7,15}" placeholder="e.g. 9876543210">
+      <label>Email (optional)</label>
+      <input type="email" name="email">
+      <label>Message (optional)</label>
+      <textarea name="message" placeholder="Quantity needed, delivery location, etc."></textarea>
+      <button type="submit" class="submit-btn">Send Inquiry</button>
+      <div class="form-note">We'll get back to you by email or WhatsApp within 24 hours.</div>
+      <div class="success-msg" id="formSuccess">Thanks — your inquiry has been sent. We'll reach out shortly.</div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- CONFIG ----------
+   1) SHEET_CSV_URL: your Google Sheet, published as CSV.
+      In Google Sheets: File > Share > Publish to web > select the product tab >
+      choose "Comma-separated values (.csv)" > Publish. Paste that link below.
+      Required column headers (exact, first row of the sheet):
+        Name | Category | Brand | Price | Image | Description
+      The Image column should just be the filename, e.g. nipple-drinker.jpg
+      (the file itself lives in your GitHub repo's /images folder — see IMAGE_BASE_URL below).
+
+   2) IMAGE_BASE_URL: the raw GitHub URL to your repo's images folder, e.g.
+      https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/
+      (must end with a trailing slash). Leave as-is to use local images/ folder
+      if you're keeping images in the same repo as index.html.
+
+   3) WEB3FORMS_KEY: free key from https://web3forms.com so inquiry form
+      submissions land in your inbox. Until replaced, form falls back to mailto.
+------------------------------- */
+const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_GOOGLE_SHEET_CSV_LINK_HERE";
+const IMAGE_BASE_URL = "images/";
+const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
+
+let PRODUCTS = [];
+let activeCategory = "All";
+
+async function loadProducts(){
+  const useSheet = SHEET_CSV_URL && !SHEET_CSV_URL.startsWith("PASTE_");
+
+  if(useSheet){
+    try{
+      const res = await fetch(SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now());
+      const csvText = await res.text();
+      const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      PRODUCTS = parsed.data
+        .filter(row => row.Name && row.Name.trim() !== "")
+        .map(row => ({
+          name: (row.Name || "").trim(),
+          category: (row.Category || "Uncategorized").trim(),
+          brand: (row.Brand || "").trim(),
+          price: (row.Price || "").toString().trim(),
+          description: (row.Description || "").trim(),
+          image: row.Image && row.Image.trim() !== ""
+            ? (row.Image.trim().startsWith("http") ? row.Image.trim() : IMAGE_BASE_URL + row.Image.trim())
+            : IMAGE_BASE_URL + "placeholder.svg"
+        }));
+    }catch(e){
+      console.error('Could not load Google Sheet CSV, falling back to products.json', e);
+      PRODUCTS = await loadLocalFallback();
+    }
+  } else {
+    PRODUCTS = await loadLocalFallback();
+  }
+
+  renderCategories();
+  renderFilters();
+  renderProducts();
+}
+
+async function loadLocalFallback(){
+  try{
+    const res = await fetch('products.json?_=' + Date.now());
+    return await res.json();
+  }catch(e){
+    console.error('Could not load products.json fallback', e);
+    return [];
+  }
+}
+
+function renderCategories(){
+  const cats = [...new Set(PRODUCTS.map(p => p.category))];
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = cats.map((c,i) => `
+    <div class="cat-card" onclick="filterByCategory('${c}')">
+      <div class="idx">${String(i+1).padStart(2,'0')}</div>
+      <h3>${c}</h3>
+      <p>${PRODUCTS.filter(p=>p.category===c).length} items listed</p>
+    </div>
+  `).join('');
+}
+
+function renderFilters(){
+  const cats = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+  const bar = document.getElementById('filterBar');
+  bar.innerHTML = cats.map(c => `<button data-cat="${c}" class="${c===activeCategory?'active':''}">${c}</button>`).join('');
+  bar.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=> filterByCategory(btn.dataset.cat));
+  });
+}
+
+function filterByCategory(cat){
+  activeCategory = cat;
+  renderFilters();
+  renderProducts();
+  document.getElementById('products').scrollIntoView({behavior:'smooth'});
+}
+
+function renderProducts(){
+  const list = activeCategory === "All" ? PRODUCTS : PRODUCTS.filter(p=>p.category===activeCategory);
+  const grid = document.getElementById('productGrid');
+  if(list.length === 0){
+    grid.innerHTML = '<p style="color:var(--slate);">No products in this category yet.</p>';
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <div class="product-card">
+      <div class="img-wrap">
+        <span class="tag">${p.category}</span>
+        <img src="${p.image || 'images/placeholder.svg'}" alt="${p.name}" loading="lazy" onerror="this.src='images/placeholder.svg'">
+      </div>
+      <div class="body">
+        <div class="brand">${p.brand || 'Farm & Flock'}</div>
+        <h3>${p.name}</h3>
+        <div class="price">${p.price ? '₹ ' + p.price : 'Price on request'}</div>
+        <button class="inquire-btn" onclick="openModal('${escapeStr(p.name)}','${escapeStr(p.brand||'Farm & Flock')}')">Inquire Now</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeStr(s){ return String(s).replace(/'/g, "\\'"); }
+
+function openModal(productName, company){
+  document.getElementById('modalProductRef').textContent = 'Product: ' + productName + ' (' + company + ')';
+  document.getElementById('fProduct').value = productName;
+  document.getElementById('fCompany').value = company;
+  document.getElementById('formSuccess').style.display = 'none';
+  document.getElementById('inquiryForm').reset();
+  document.getElementById('fProduct').value = productName;
+  document.getElementById('fCompany').value = company;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+document.getElementById('modalClose').addEventListener('click', ()=>{
+  document.getElementById('modalOverlay').classList.remove('open');
+});
+document.getElementById('modalOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'modalOverlay') document.getElementById('modalOverlay').classList.remove('open');
+});
+
+document.getElementById('inquiryForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  const name = data.get('name');
+  const mobile = data.get('mobile');
+  const product = data.get('product');
+  const company = data.get('company');
+  const email = data.get('email');
+  const message = data.get('message');
+
+  if(WEB3FORMS_KEY && WEB3FORMS_KEY !== "YOUR_WEB3FORMS_ACCESS_KEY"){
+    // Real submission via Web3Forms (free, no backend) -> lands in your email
+    const payload = {
+      access_key: WEB3FORMS_KEY,
+      subject: "New Inquiry: " + product,
+      name: name, mobile: mobile, email: email || "not provided",
+      product: product, company: company, message: message || "—"
+    };
+    try{
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+      if(result.success){
+        document.getElementById('formSuccess').style.display = 'block';
+        form.reset();
+      } else {
+        alert('Something went wrong sending your inquiry. Please try again or WhatsApp us directly.');
+      }
+    }catch(err){
+      alert('Network error — please try again.');
+    }
+  } else {
+    // Fallback: no key configured yet, open email client with prefilled inquiry
+    const body = `Name: ${name}%0AMobile: ${mobile}%0AEmail: ${email || '-'}%0AProduct: ${product} (${company})%0AMessage: ${message || '-'}`;
+    window.location.href = `mailto:youremail@example.com?subject=Inquiry: ${encodeURIComponent(product)}&body=${body}`;
+    document.getElementById('formSuccess').style.display = 'block';
+    form.reset();
+  }
+});
+
+document.getElementById('newsletterForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  // Placeholder: connect to Mailchimp/Brevo embed form action later.
+  document.getElementById('newsletterSuccess').style.display = 'block';
+  this.reset();
+});
+
+loadProducts();
+</script>
+
+</body>
+</html>
